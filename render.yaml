@@ -1,7 +1,7 @@
 services:
-  # Backend Service
+  # 1. Backend Service (Django)
   - type: web
-    name: event-booking-backend
+    name: event-booking-api
     env: python
     buildCommand: ./backend/build.sh
     startCommand: gunicorn core.wsgi:application --chdir backend
@@ -15,19 +15,19 @@ services:
           name: event-booking-db
           property: connectionString
       - key: ALLOWED_HOSTS
-        value: event-booking-backend.onrender.com
+        value: "*"
       - key: FRONTEND_URL
-        value: https://event-booking-frontend.onrender.com
+        value: https://event-booking-app.onrender.com
 
-  # Frontend Service
+  # 2. Frontend Service (React)
   - type: web
-    name: event-booking-frontend
+    name: event-booking-app
     env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/build
     envVars:
       - key: REACT_APP_API_URL
-        value: https://event-booking-backend.onrender.com/api/
+        value: https://event-booking-api.onrender.com/api/
     routingRules:
       - route: /.*
         destination: /index.html
